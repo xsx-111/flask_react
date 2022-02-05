@@ -1,4 +1,37 @@
-# Getting Started with Create React App
+### Installation
+To create a virtual environment on your system; run this command:
+For mac/unix users:
+```
+cd backend 
+python3 -m venv env
+```
+For windows users:
+```
+cd backend
+ py -m venv env
+```
+After creating the environment, activate it by running :
+For mac/unix users:
+```
+source env/bin/activate
+```
+For windows users:
+```
+.\env\Scripts\activate
+```
+After activating the enviornment:
+```
+cd ..
+```
+### Run the backend
+```
+npm run start-backend
+```
+### Run the frontend
+```
+npm run start
+```
+<!-- # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -67,4 +100,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 ### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify) -->
