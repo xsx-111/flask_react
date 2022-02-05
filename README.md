@@ -8,7 +8,7 @@ python3 -m venv env
 For windows users:
 ```
 cd backend
- py -m venv env
+py -m venv env
 ```
 After creating the environment, activate it by running :
 For mac/unix users:
