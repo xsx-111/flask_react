@@ -5,12 +5,8 @@ api = Flask(__name__)
 
 @api.route('/profile/<searchResult>')
 def my_profile(searchResult):
-    # response_body = [{
-    #     "name": searchResult,
-    #     "about": "Hello! I'm a full stack developer that loves python and javascript"
-    # }]
     response_body = []
-    for i in range(25):
+    for i in range(1, 150):
         response_body.append({
             'id': i,
             'song_name': 'song_name' + str(i),
