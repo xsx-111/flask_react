@@ -25,7 +25,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
 import { useEffect, useState } from 'react';
 import axios from "axios";
-import { useLocation } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 function Copyright() {
     return (
@@ -40,13 +40,14 @@ function Copyright() {
     );
 }
 
-const Theme = { palette: { primary: { main: '#e0b159' }, secondary: { main: '#FFFFFF' } } };
+const Theme = { palette: { primary: { main: '#d7b067' }, secondary: { main: '#FFFFFF' } } };
 const theme = createTheme(Theme);
 
 export default function SearchPage() {
 
     const [offset, setOffset] = useState(0);
     const [perpage, setPerpage] = useState(10);
+    const navigate = useNavigate();
     const [searchContent, setSearchContent] = useState('');
 
     const handleChange = (event, value) => {
@@ -58,7 +59,11 @@ export default function SearchPage() {
     };
 
     const [profileData, setProfileData] = useState([{}]);
-    const location = useLocation();
+    const location = useLocation()
+
+    function back() {
+    navigate("/");
+  }
 
     useEffect(() => {
         async function getSearchResult(state) {
@@ -122,7 +127,7 @@ export default function SearchPage() {
             <main>
                 <Box
                     sx={{
-                        bgcolor: '#efd697',
+                        bgcolor: '#ecd49a',
                         pt: 2,
                         pb: 6,
                     }}
@@ -132,10 +137,19 @@ export default function SearchPage() {
                             component="h1"
                             variant="h3"
                             align="center"
-                            color="text.primary"
+                            color={'#444444'}
                             sx={{mt: 5}}
                         >
                             Song Results
+                        </Typography>
+                        <Typography
+                            component="h1"
+                            variant="h3"
+                            align="center"
+                            color="text.primary"
+                            sx={{mt: 5}}
+                        >
+                            <Button variant={"contained"} onClick={e => back()}>return to main page</Button>
                         </Typography>
                     </Container>
                 </Box>
@@ -211,7 +225,7 @@ export default function SearchPage() {
                     color="text.secondary"
                     component="p"
                 >
-                    Something here to give the footer a purpose!
+                    TTDS CW3
                 </Typography>
                 <Copyright />
             </Box>
