@@ -1,0 +1,2 @@
+Input Out LyricsOutput rotation
+Input translationEmbed
