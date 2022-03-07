@@ -63,8 +63,8 @@ export default function SearchPage() {
     const location = useLocation()
 
     function back() {
-    navigate("/");
-  }
+        navigate("/");
+    }
 
     useEffect(() => {
         async function getSearchResult(state) {
@@ -103,8 +103,6 @@ export default function SearchPage() {
             }
         })
     }
-
-    const navigate = useNavigate();
 
     function toDetail(id) {
         navigate("/DetailPage", {state: id});
