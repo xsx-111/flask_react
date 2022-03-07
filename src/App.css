@@ -13,19 +13,8 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
 .App-link {
-  color: #61dafb;
+  color: #efd697;
 }
 
 @keyframes App-logo-spin {
@@ -36,40 +25,55 @@
     transform: rotate(360deg);
   }
 }
+.App-header {
+  background-color: #f3e1b1;
+  min-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
 
 .App-input{
   background-image: url(search.svg);
   background-position: 97% 50%;
   background-repeat: no-repeat;
-  border: 1px solid #2C71A1;
+  border: 1px solid #e0b159;
   padding: 8px;
   padding-right: 28px;
   background-size: 20px 20px;
   border-radius: 10px;
   min-width: 40vw;
   font-size: 18px;
-  height: 30px;
+  height: 55px;
 }
 
 .App-input:focus{
   outline: none;
-  border: 1px solid blue;
-  box-shadow: 0px 0px 25px -3px #2C71A1;
+  border: 1px solid orange;
+  box-shadow: 0px 0px 25px -3px #efd697;
 }
 
 .App-submit{
   border-radius: 10px;
-  background: #2C71A1;
-  border: 1px solid #2C71A1;
+  background: #e0b159;
+  border: 1px solid #e0b159;
   margin-left: 10px;
   cursor: pointer;
   font-size: 18px;
   height: 50px;
-  color: #282c34;
+  color: #323741;
 }
 
 .App-submit:focus{
   outline: none;
-  border: 1px solid blue;
-  box-shadow: 0px 0px 25px -3px #2C71A1;
+  border: 1px solid coral;
+  box-shadow: 0px 0px 25px -3px #e0b159;
+}
+
+.App-title{
+  font-size: 60px;
+  color: #3B666B;
 }
