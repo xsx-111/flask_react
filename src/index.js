@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import SearchPage from './SearchPage';
+import DetailPage from './DetailPage';
 import reportWebVitals from './reportWebVitals';
 import { Route,Routes,BrowserRouter as Router } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ ReactDOM.render(
       <Routes>
         <Route path="/" element={<App/>}/>
         <Route path="/SearchPage" element={<SearchPage/>}/>
+        <Route path="/DetailPage" element={<DetailPage/>}/>
       </Routes>
     </Router>
   </React.StrictMode>,
