@@ -1,0 +1,43 @@
+Gyroscope LyricsOne, two, three
+Four, five, six
+Seven, eight, nine
+Zero, zero
+Nine, nine
+Zero, nine, eight
+Zero, zero, zero
+Nine, zero
+Three, four, five
+Six, seven, eight
+Nine, zero
+Zero, nine
+Eight, zero
+One, two, three
+Four, five, six
+Seven, eight, nine
+Zero, zero
+Nine, eight
+Zero, zero
+Zero, zero
+One, zero, two
+Three, four, five
+Six, seven, eight
+Nine, zero
+Zero, nine, nine
+Zero, zero, five
+Zero, zero, zero
+Zero, two, three
+Four, five, six
+Seven, eight, nine
+Zero, zero
+Two, three, four
+Five, six, seven
+Eight, zero, zero
+Zero, nine, nine
+Zero, zero, zero
+Zero, zero, zero
+Zero, zero
+Three, four, five
+Six, seven, eight
+Nine, zero
+Zero, nine, eight
+Zero, nineEmbed

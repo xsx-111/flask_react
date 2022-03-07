@@ -1,0 +1,37 @@
+1646071075154	geckodriver	INFO	Listening on 127.0.0.1:52598
+1646071075671	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-headless" "--remote-debugging-port" "52599" "-foreground" "-no-remote" "-profile" "/var/folders/m_/t0002n3n31jbzj617qsswsqc0000gn/T/rust_mozprofilehKl33z"
+*** You are running in headless mode.
+1646071076269	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/m_/t0002n3n31jbzj617qsswsqc0000gn/T/rust_mozprofilehKl33z/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 241"  data: no]
+DevTools listening on ws://localhost:52599/devtools/browser/87e80b13-4c28-4ae3-a86b-bce9562fe6a9
+1646071077801	Marionette	INFO	Listening on port 52606
+1646071077849	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1646071116112	geckodriver	INFO	Listening on 127.0.0.1:52669
+1646071116625	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-headless" "--remote-debugging-port" "52670" "-foreground" "-no-remote" "-profile" "/var/folders/m_/t0002n3n31jbzj617qsswsqc0000gn/T/rust_mozprofileaxUjeU"
+*** You are running in headless mode.
+1646071116991	Marionette	INFO	Marionette enabled
+[GFX1-]: RenderCompositorSWGL failed mapping default framebuffer, no dt
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/m_/t0002n3n31jbzj617qsswsqc0000gn/T/rust_mozprofileaxUjeU/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 241"  data: no]
+DevTools listening on ws://localhost:52670/devtools/browser/9afba6e7-3ade-46a6-abfe-6d4db40a5c76
+1646071118131	Marionette	INFO	Listening on port 52677
+1646071118185	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: , line 0: uncaught exception: 0
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+JavaScript warning: https://pagead2.googlesyndication.com/bg/U5D2RVqZ1PRjVXB30NjW_eGY8d3xtAEXQJvJ3b52R2Q.js line 1 > eval line 1116 > eval line 1 > eval line 1 > eval, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: https://pagead2.googlesyndication.com/bg/U5D2RVqZ1PRjVXB30NjW_eGY8d3xtAEXQJvJ3b52R2Q.js line 1 > eval line 6361 > eval line 1 > eval line 1 > eval, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript warning: https://pagead2.googlesyndication.com/bg/U5D2RVqZ1PRjVXB30NjW_eGY8d3xtAEXQJvJ3b52R2Q.js line 1 > eval line 4656 > eval line 1 > eval line 1 > eval, line 1: WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER.
+JavaScript error: , line 0: uncaught exception: 7
+JavaScript error: , line 0: uncaught exception: 7
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
