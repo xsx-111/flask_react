@@ -25,7 +25,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
 import { useEffect, useState } from 'react';
 import axios from "axios";
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Copyright() {
     return (
@@ -46,9 +46,10 @@ const theme = createTheme(Theme);
 export default function SearchPage() {
 
     const [offset, setOffset] = useState(0);
-    const [perpage, setPerpage] = useState(10);
+    const [perpage, setPerpage] = useState(12);
     const navigate = useNavigate();
     const [searchContent, setSearchContent] = useState('');
+    const [songId, setSongId] = useState('');
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
@@ -101,6 +102,12 @@ export default function SearchPage() {
                 console.log(error.response.headers)
             }
         })
+    }
+
+    const navigate = useNavigate();
+
+    function toDetail(id) {
+        navigate("/DetailPage", {state: id});
     }
 
     return (
@@ -159,7 +166,7 @@ export default function SearchPage() {
                         {profileData.slice(offset, offset + perpage).map((result) => (
                             <Grid item key={result.id} xs={12} sm={6} md={4}>
                                 <Card
-                                    sx={{ height: 400 }}
+                                    sx={{ height: 400, width: 220 }}
                                     // sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                                 >
                                     <CardMedia
@@ -180,7 +187,7 @@ export default function SearchPage() {
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button size="small">View</Button>
+                                        <Button size="small" onClick={e => toDetail(result.id)}>View</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -205,7 +212,7 @@ export default function SearchPage() {
                                         label="num"
                                         onChange={handleNumChange}
                                     >
-                                        <MenuItem value={10}>10</MenuItem>
+                                        <MenuItem value={12}>12</MenuItem>
                                         <MenuItem value={30}>30</MenuItem>
                                         <MenuItem value={50}>50</MenuItem>
                                         <MenuItem value={100}>100</MenuItem>
