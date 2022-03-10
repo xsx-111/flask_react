@@ -24,3 +24,9 @@ yarn-error.log*
 
 backend/env
 backend/__pycache__
+backend/data_functions/data/part_1.pickle
+backend/data_functions/data/part_2.pickle
+backend/data_functions/data/part_3.pickle
+backend/data_functions/data/part_4.pickle
+backend/data_functions/data/sentences.csv
+backend/data_functions/data/songs_info.json
