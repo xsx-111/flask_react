@@ -4,16 +4,9 @@ import { useNavigate } from "react-router-dom";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import Link from "@mui/material/Link";
-import Toolbar from "@mui/material/Toolbar";
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import AppBar from "@mui/material/AppBar";
 
 function Copyright() {
     return (
@@ -41,7 +34,7 @@ export default function App() {
   }
   
   return (
-  <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
             <CssBaseline />
             <div className={"App"}>
                 <header className={"App-header"}>
@@ -49,8 +42,16 @@ export default function App() {
                         Lyrics Search
                     </div>
                     <div>
-                        <input required type="text" placeholder="Type a query" className={"App-input"} onChange={e => setfName(e.target.value)}/>
-                        <button onClick={e => getData()} className={"App-submit"}> Search </button>
+                        <input 
+                            onKeyPress={(event) => {
+                                if (event.key === 'Enter') {
+                                    getData()
+                                }
+                            }}
+                            required type="text" placeholder="Type a query" className={"App-input"} onChange={e => setfName(e.target.value)}/>
+                        <button onClick={e => getData()} className={"App-submit"}> 
+                            Search 
+                        </button>
                     </div>
                 </header>
                 <Box sx={{ bgcolor: '#efd697', p: 6 }} component="footer">
@@ -68,9 +69,6 @@ export default function App() {
                     <Copyright />
                 </Box>
             </div>
-
-
-
-        </ThemeProvider>
+    </ThemeProvider>
   );
 }

@@ -22,8 +22,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import TweetTokenizer
 
-nltk.download('stopwords')
-nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('punkt')
 
 stop_words = set(stopwords.words('english'))
 
@@ -48,8 +48,6 @@ def stem(tokens):
 
 from pymongo import MongoClient
 
-
-
 #client = MongoClient('mongodb://admin:iamyourfather@127.0.0.1:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false')
 #client = MongoClient("mongodb+srv://TTDS:ttdscw3@ttds-cluster.zsdaj.mongodb.net/?retryWrites=true&w=majority")
 client = MongoClient(host='localhost',port=27017)
@@ -62,32 +60,36 @@ songs_info=db.songs_info
 from collections import defaultdict
 from bson.objectid import ObjectId
 
-
 def search_result(raw_text):
     preprocessed,raw_list = query_preprossing(raw_text,stemming=True)
 
-    
     common_dict_output= common_dict_search(preprocessed)
-    if common_dict_output !='No result found':
+    if common_dict_output !={}:
         common_dict,term_not_found_ind=common_dict_output
         outputs=[]
         song_score_dic = phrase_tfidf(common_dict)
-        res_id = ranked_phrase_search(song_score_dic,10)
+        res_id = ranked_phrase_search(song_score_dic, 10)
         for song_id in res_id:
-            outputs.append(songs_info.find({'song_id':song_id})[0])
+            song_output={}
+            song_output = songs_info.find({'song_id':song_id})[0]
+            sen_id  = list(common_dict[song_id])[0]
+            #标红的歌词内容（只取第一句） 
+            song_output['mark_lyric'] = sentences.find({'Sentence_id': sen_id})[0]['Sentence']
+            outputs.append(song_output)
+            
         if len(term_not_found_ind) >0:
-            term_not_found=[raw_list[ind] for ind in term_not_found_ind]
-            info='{} not found' .format(', '.join(term_not_found))
+            term_not_found = [raw_list[ind] for ind in term_not_found_ind]
+            output_info = list(term_not_found)
+            #output_info='{} not found' .format(', '.join(term_not_found))
         else:
-            info='Results:'
+            output_info=[]
             
-            
-        return outputs,info
+        return outputs,output_info
     
     else: 
-        return common_dict_output
-
-
+        return common_dict_output    
+    
+    
 def query_preprossing(raw_text,stemming=True):
     tokenized = tokenize(raw_text)
     raw_list = list(filter(lambda x: x.isalnum(), tokenized))
@@ -105,7 +107,7 @@ def common_dict_search(query_params_after):
     if len(terms) == 1:
         common_dict = song_sentence_id(terms[0])
         if len(common_dict) ==0:
-            return 'No result found'
+            return {},[]
         else:
             return common_dict,[]
             
@@ -122,7 +124,7 @@ def common_dict_search(query_params_after):
                 term_not_found_ind.append(ind)
             
         if len(term_not_found_ind)==len(terms):
-            return 'No result found'
+            return {},[]
         else: 
             cursors2 = cursors.copy()
         
@@ -161,7 +163,7 @@ def common_dict_search(query_params_after):
         
             return common_dict,term_not_found_ind
         else:
-            return 'No result found'
+            return {},[]
 
 def song_sentence_id(term):
     sentence_id_dict=defaultdict(tuple)
@@ -205,47 +207,12 @@ def phrase_tfidf(common_dict):
 def ranked_phrase_search(scores_dic,number_results):
     #返回songs id的前几个
     result_ids = [item[0] for item in get_top(scores_dic,number_results,skip=0)] 
-    return result_ids 
+    return result_ids
 
 def get_top(scores,n,skip=0):
-        # get top N results (skipping the first `skip` results)
-        # return a list of (id, score) tuples, sorted from highest to lowest by score (e.g. [(19, 1.5), (6, 1.46), ...]
-        return [(id, score) for id, score in sorted(scores.items(), key=lambda item: item[1], reverse=True)][skip:skip+n]
- 
+    # get top N results (skipping the first `skip` results)
+    # return a list of (id, score) tuples, sorted from highest to lowest by score (e.g. [(19, 1.5), (6, 1.46), ...]
+    return [(id, score) for id, score in sorted(scores.items(), key=lambda item: item[1], reverse=True)][skip:skip+n]
 
-
-
-    
-
-
-# In[2]:
-
-
-# test
-#import time
-#s=time.time()
-#raw_text = 'white rich my father'    
-
-#search_res=search_result(raw_text)
-
-#e=time.time()
-#t=e-s
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+# print(search_result('creep you out erfoakd'))
+# print(search_result('what do you want'))
