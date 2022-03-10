@@ -1,57 +1,17 @@
-from crypt import methods
+from unittest.mock import seal
 from flask import Flask, jsonify, request
+from phrase_search import search_result
 
 api = Flask(__name__)
 
 @api.route('/profile/<searchResult>')
 def my_profile(searchResult):
     response_body = []
-    for i in range(1, 150):
-        response_body.append({
-            'id': i,
-            'song_name': 'song_name' + str(i),
-            'singer_name': 'singer_name' + str(i),
-            'album': 'album' + str(i),
-            'image':  'https://images.genius.com/14a5edcd1e4382bdfc9bb215540c648e.300x300x1.jpg',
-            'lyrics': 'lyrics searched: ' + searchResult + str(i),
-            'wholeLyrics': ["Hey Garry, how d'ya spell Dun Laoghaire?",
-                            "That's easy, Bob! D.U.N. L.A.O.G.H.A.I.R.E.",
-                            "That's how you spell Dun Laoghaire.",
-                            "No, you're wrong, pal. That's not how you spell it. That's not how you spell Dun Laoghaire.",
-                            'It is.',
-                            "It isn't.",
-                            'It is!',
-                            'It is not!',
-                            'It is!',
-                            "I'll tell ya how to spell it",
-                            "No, you won't",
-                            'Now',
-                            'All right',
-                            'Tired N Weary',
-                            'Drab N Dreary',
-                            "That's how you spell it, Dun Laoghaire.",
-                            'It is not',
-                            'It is so',
-                            'It is not',
-                            'It is',
-                            "Well, it's the stupidest way I've ever heard of spelling Dun Laoghaire.",
-                            'Well I spell it drunk and beary',
-                            'Licentious and leary',
-                            "There's only one way out of Dun Laoghaire, you know what it is?",
-                            'Off the mail boat piery',
-                            "Off the mail boat piery, I'm glad we got out",
-                            'Who cares about Dun Laoghaire?',
-                            "You're talkin' about me ,home town pal.",
-                            'Ah, listen to that.., do do do do......',
-                            'Come on everybody, I want the world to spell Dun Laoghaire!',
-                            'Are ya ready? 1, 2, 3, 4',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire',
-                            'D.U.N. L.A.O.G.H.A.I.R.E. Dun Laoghaire, Dun Laoghaire']
-        })
+    results = search_result(searchResult)[0]
+    print(type(results[0]))
+    for result in results:
+        result.pop("_id")
+        response_body.append(result)
     return jsonify(response_body)
 
 @api.route('/whole/<id>')
