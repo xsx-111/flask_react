@@ -1,5 +1,3 @@
-from crypt import methods
-from unittest.mock import seal
 from flask import Flask, jsonify, request
 from phrase_search import search_result
 
