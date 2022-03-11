@@ -22,8 +22,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import TweetTokenizer
 
-# nltk.download('stopwords')
-# nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('punkt')
 
 stop_words = set(stopwords.words('english'))
 
