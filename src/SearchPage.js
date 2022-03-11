@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
@@ -25,9 +24,16 @@ import Skeleton from '@mui/material/Skeleton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import CardContent from '@mui/material/CardContent';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import Modal from '@mui/material/Modal';
 import { useEffect, useState, Fragment } from 'react';
 import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
+
 
 function Copyright() {
     return (
@@ -52,6 +58,18 @@ const Img = styled('img')({
     maxHeight: '100%',
 });
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -72,6 +90,10 @@ export default function SearchPage() {
     const [loading, setLoading] = useState(true);
     const [expanded, setExpanded] = useState(false);
 
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
     };
@@ -87,6 +109,7 @@ export default function SearchPage() {
 
     const [profileData, setProfileData] = useState([{}]);
     const location = useLocation();
+    //const [wholeLyrics, setWholeLyrics] = useState([]);
 
     function back() {
         navigate("/");
@@ -134,6 +157,7 @@ export default function SearchPage() {
         })
     }
 
+
     function toDetail(id) {
         navigate("/DetailPage", {state: id});
     }
@@ -172,18 +196,26 @@ export default function SearchPage() {
                             component="h1"
                             variant="h3"
                             align="center"
-                            color={'#444444'}
+                            color="#444444"
                             sx={{mt: 5}}
                         >
-                            Song Results
-                        </Typography>
-                        <Typography
-                            component="h1"
-                            variant="h3"
-                            align="center"
-                            color="text.primary"
-                            sx={{mt: 5}}
-                        >
+                            Song Results<br/>
+                            <FormControl>
+                                {/*<FormLabel id="demo-row-radio-buttons-group-label">Filter</FormLabel>*/}
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
+                                >
+                                    <FormControlLabel value="singer" control={<Radio />} label="Singer" />
+                                    <FormControlLabel value="album" control={<Radio />} label="Album" />
+                                    <FormControlLabel value="category" control={<Radio />} label="Category" />
+                                    <FormControlLabel value="disabled" disabled control={<Radio />} label="other"/>
+                                </RadioGroup>
+                            </FormControl>
+                            {/*<FormControlLabel control={<Checkbox defaultChecked />} label="Singer" />
+                            <FormControlLabel control={<Checkbox />} label="Album" />
+                            <FormControlLabel control={<Checkbox />} label="Type" /><br/><br/>*/}
                             <Button variant={"contained"} onClick={e => back()}>return to main page</Button>
                         </Typography>
                     </Container>
@@ -229,9 +261,32 @@ export default function SearchPage() {
                                             <Typography variant="body2" color="text.secondary">
                                                 {result.mark_lyric}
                                             </Typography>
+
                                         </Grid>
                                         <Grid item>
-                                            <Button size="medium" variant='outlined' onClick={e => toDetail(result.id)}>View</Button>
+                                              <Button onClick={handleOpen}>View</Button>
+                                              <Modal
+                                                open={open}
+                                                onClose={handleClose}
+                                                aria-labelledby="modal-modal-title"
+                                                aria-describedby="modal-modal-description"
+                                              >
+                                                <Box sx={style}>
+                                                  <Typography id="modal-modal-title" variant="h6" component="h2">
+                                                    {result.song_name}<br/>
+                                                      <Img alt="complex" src={result.album_cover_url} />
+                                                  </Typography>
+                                                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                                      singer name: {result.artist_name}<br/>
+                                                      album:<br/>
+                                                      lyrics found: {result.mark_lyric}<br/>
+                                                      wholeLyrics: <br/>
+                                                  </Typography>
+                                                </Box>
+                                              </Modal>
+
+                                            {/*<Button size="medium" variant='outlined' onClick={e => toDetail(result.id)}>View</Button>*/}
+
                                         </Grid>
                                         {/* <ExpandMore
                                             expand={expanded}

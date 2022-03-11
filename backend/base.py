@@ -1,4 +1,3 @@
-from unittest.mock import seal
 from flask import Flask, jsonify, request
 from phrase_search import search_result
 
@@ -6,13 +5,8 @@ api = Flask(__name__)
 
 @api.route('/profile/<searchResult>')
 def my_profile(searchResult):
-    response_body = []
     results = search_result(searchResult)[0]
-    print(type(results[0]))
-    for result in results:
-        result.pop("_id")
-        response_body.append(result)
-    return jsonify(response_body)
+    return jsonify(results['results'])
 
 @api.route('/whole/<id>')
 def wholeLyrics(id):
