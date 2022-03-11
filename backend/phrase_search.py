@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 from collections import defaultdict
 from bson.objectid import ObjectId
-
-# phrase search
+from collections import defaultdict
+from collections import Counter 
+from operator import itemgetter
 import pymongo
 import gridfs
 import json
@@ -48,6 +46,8 @@ def stem(tokens):
 
 from pymongo import MongoClient
 
+
+
 #client = MongoClient('mongodb://admin:iamyourfather@127.0.0.1:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false')
 #client = MongoClient("mongodb+srv://TTDS:ttdscw3@ttds-cluster.zsdaj.mongodb.net/?retryWrites=true&w=majority")
 client = MongoClient(host='localhost',port=27017)
@@ -60,22 +60,27 @@ songs_info=db.songs_info
 from collections import defaultdict
 from bson.objectid import ObjectId
 
+
+
+
 def search_result(raw_text):
     preprocessed,raw_list = query_preprossing(raw_text,stemming=True)
-
+    number_results=10
+    
     common_dict_output= common_dict_search(preprocessed)
     if common_dict_output !={}:
         common_dict,term_not_found_ind=common_dict_output
-        outputs=[]
+        outputs=defaultdict(list)
         song_score_dic = phrase_tfidf(common_dict)
-        res_id = ranked_phrase_search(song_score_dic, 10)
+        res_id = ranked_phrase_search(song_score_dic,number_results)
         for song_id in res_id:
             song_output={}
             song_output = songs_info.find({'song_id':song_id})[0]
+            song_output.pop('_id')
             sen_id  = list(common_dict[song_id])[0]
             #标红的歌词内容（只取第一句） 
             song_output['mark_lyric'] = sentences.find({'Sentence_id': sen_id})[0]['Sentence']
-            outputs.append(song_output)
+            outputs['results'].append(song_output)
             
         if len(term_not_found_ind) >0:
             term_not_found = [raw_list[ind] for ind in term_not_found_ind]
@@ -83,13 +88,32 @@ def search_result(raw_text):
             #output_info='{} not found' .format(', '.join(term_not_found))
         else:
             output_info=[]
-            
-        return outputs,output_info
+        
+        artist_filter=result_filter(outputs['results'],'artist_name')
+        outputs['artist_name'].append(artist_filter)
+        album_filter=result_filter(outputs['results'],'album_name')
+        outputs['album_name'].append(album_filter)
+        genres_filter=result_filter(outputs['results'],'genres')
+        outputs['genres'].append(genres_filter)
+        return dict(outputs), output_info
+        # return outputs,artist_filter,album_filter,genres_filter,output_info
     
     else: 
-        return common_dict_output    
+        return common_dict_output
     
+def result_filter(res_list,filter_type):
+    if res_list!=[]:
+        filter_dict=defaultdict(list)
+        for i,res in enumerate(res_list):
+            filter_value=res[filter_type] # 取对应字典的歌手名，专辑名或种类
+            filter_dict[filter_value].append(res)
+        # 按字母顺序排序
+        sorted_dict = dict(sorted(filter_dict.items()))
+        return sorted_dict
+    else:
+        return {}
     
+
 def query_preprossing(raw_text,stemming=True):
     tokenized = tokenize(raw_text)
     raw_list = list(filter(lambda x: x.isalnum(), tokenized))
@@ -129,7 +153,7 @@ def common_dict_search(query_params_after):
             cursors2 = cursors.copy()
         
         #取 common song id 返回一个list
-        common_song_id = cursors.pop()
+        common_song_id = cursors.pop() 
         for each_term_dic in cursors:
             if len(set(common_song_id) & set(each_term_dic.keys()))>0:
                 common_song_id = set(common_song_id) & set(each_term_dic.keys())
@@ -170,7 +194,7 @@ def song_sentence_id(term):
     try:
         # initialise the dictionary
         for i in range(5):
-            part_i=db.inverted_index.find({"term": term})[i]
+            part_i=inverted_index.find({"term": term})[i]
             for song_dict in part_i['songs']:
                 # initialize the tuple of ObjectId
                 sentence_id=() 
@@ -207,12 +231,12 @@ def phrase_tfidf(common_dict):
 def ranked_phrase_search(scores_dic,number_results):
     #返回songs id的前几个
     result_ids = [item[0] for item in get_top(scores_dic,number_results,skip=0)] 
-    return result_ids
+    return result_ids 
 
 def get_top(scores,n,skip=0):
-    # get top N results (skipping the first `skip` results)
-    # return a list of (id, score) tuples, sorted from highest to lowest by score (e.g. [(19, 1.5), (6, 1.46), ...]
-    return [(id, score) for id, score in sorted(scores.items(), key=lambda item: item[1], reverse=True)][skip:skip+n]
+        # get top N results (skipping the first `skip` results)
+        # return a list of (id, score) tuples, sorted from highest to lowest by score (e.g. [(19, 1.5), (6, 1.46), ...]
+        return [(id, score) for id, score in sorted(scores.items(), key=lambda item: item[1], reverse=True)][skip:skip+n]
 
 # print(search_result('creep you out erfoakd'))
 # print(search_result('what do you want'))
