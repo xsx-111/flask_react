@@ -22,12 +22,18 @@ import Pagination from '@mui/material/Pagination';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
 import Skeleton from '@mui/material/Skeleton';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Collapse from '@mui/material/Collapse';
-import CardContent from '@mui/material/CardContent';
-import { useEffect, useState, Fragment } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormLabel from '@mui/material/FormLabel';
+import { useEffect, useState } from 'react';
 import axios from "axios";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { generatePath, useLocation, useNavigate } from 'react-router-dom';
 
 function Copyright() {
     return (
@@ -52,17 +58,6 @@ const Img = styled('img')({
     maxHeight: '100%',
 });
 
-const ExpandMore = styled((props) => {
-    const { expand, ...other } = props;
-    return <IconButton {...other} />;
-  })(({ theme, expand }) => ({
-    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  }));
-
 export default function SearchPage() {
 
     const [offset, setOffset] = useState(0);
@@ -70,18 +65,64 @@ export default function SearchPage() {
     const navigate = useNavigate();
     const [searchContent, setSearchContent] = useState('');
     const [loading, setLoading] = useState(true);
-    const [expanded, setExpanded] = useState(false);
+    const [artistFilter, setArtistFilter] = useState([{}]);
+    const [albumFilter, setAlbumFilter] = useState([{}]);
+    const [genresFilter, setGenresFilter] = useState([{}]);
+    const [filterList, setFilterList] = useState([{}]);
+    const [open, setOpen] = useState(false);
+    const [content, setContent] = useState([{}]);
+    const [filterType, setFilterType] = useState('disable');
+    const [select, setSelect] = useState('None');
+    const [data, setData] = useState([{}])
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
     };
 
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
-
     const handleNumChange = (event) => {
         setPerpage(event.target.value);
+        setOffset(0);
+    };
+
+    const handleRadioChange = (event) => {
+        setFilterType(event.target.value);
+        setProfileData(data["results"]);
+        setSelect("None");
+        switch (event.target.value) {
+            case "singer":
+                setFilterList(Object.keys(artistFilter));
+                break;
+            case "album":
+                setFilterList(Object.keys(albumFilter));
+                break;
+            case "category":
+                setFilterList(Object.keys(genresFilter));
+                break;
+            default:
+                break;
+        }
+        console.log(filterList);
+    };
+
+    const handleSelectChange = (event) => {
+        setSelect(event.target.value);
+        if (event.target.value !== "None") {
+            switch (filterType) {
+                case "singer":
+                    setProfileData(artistFilter[event.target.value]);
+                    break;
+                case "album":
+                    setProfileData(albumFilter[event.target.value]);
+                    break;
+                case "category":
+                    setProfileData(genresFilter[event.target.value]);
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            setProfileData(data["results"]);
+        }
         setOffset(0);
     };
 
@@ -92,36 +133,58 @@ export default function SearchPage() {
         navigate("/");
     }
 
+    const handleClickOpen = (result) => () => {
+        setOpen(true);
+        setContent(result);
+        console.log(result);
+    };
+    
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     useEffect(() => {
         async function getSearchResult(state) {
-        axios({
-            method: "GET",
-            url: `/profile/${state}`,
-        })
-        .then((response) => {
-            setProfileData(response.data)
-            setLoading(false)
-            console.log(response.data)
-        }).catch((error) => {
-            if (error.response) {
-                console.log(error.response)
-                console.log(error.response.status)
-                console.log(error.response.headers)
-            }
-        })
+            axios({
+                method: "GET",
+                url: `/profile/${state}`,
+            })
+            .then((response) => {
+                setData(response.data)
+                setProfileData(response.data['results'])
+                setLoading(false)
+                setArtistFilter(response.data['artist_name'][0])
+                setAlbumFilter(response.data['album_name'][0])
+                setGenresFilter(response.data['genres'][0])
+                console.log(response.data)
+            }).catch((error) => {
+                if (error.response) {
+                    console.log(error.response)
+                    console.log(error.response.status)
+                    console.log(error.response.headers)
+                }
+            })
         }
         getSearchResult(location.state);
         console.log(profileData);
+        console.log(artistFilter);
+        console.log(Object.keys(artistFilter))
     }, [])
 
     function getSearchResultData() {
         setLoading(true)
+        setSelect("None")
+        setFilterType("disable")
         axios({
             method: "GET",
             url: `/profile/${searchContent}`,
         })
         .then((response) => {
-            setProfileData(response.data)
+            setData(response.data)
+            setProfileData(response.data['results'])
+            setArtistFilter(response.data['artist_name'][0])
+            setAlbumFilter(response.data['album_name'][0])
+            setGenresFilter(response.data['genres'][0])
             setOffset(0)
             setLoading(false)
             console.log(response.data)
@@ -132,10 +195,6 @@ export default function SearchPage() {
                 console.log(error.response.headers)
             }
         })
-    }
-
-    function toDetail(id) {
-        navigate("/DetailPage", {state: id});
     }
 
     return (
@@ -175,15 +234,45 @@ export default function SearchPage() {
                             color={'#444444'}
                             sx={{mt: 5}}
                         >
-                            Song Results
-                        </Typography>
-                        <Typography
-                            component="h1"
-                            variant="h3"
-                            align="center"
-                            color="text.primary"
-                            sx={{mt: 5}}
-                        >
+                            Song Results<br/>
+                            <Stack spacing={2} justifyContent="center">
+                                <FormControl>
+                                    {/*<FormLabel id="demo-row-radio-buttons-group-label">Filter</FormLabel>*/}
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="row-radio-buttons-group"
+                                        value={filterType}
+                                        onChange={handleRadioChange}
+                                    >
+                                        <FormControlLabel value="singer" control={<Radio />} label="Singer" />
+                                        <FormControlLabel value="album" control={<Radio />} label="Album" />
+                                        <FormControlLabel value="category" control={<Radio />} label="Category" />
+                                        <FormControlLabel value="disabled" disabled control={<Radio />} label="other"/>
+                                    </RadioGroup>
+                                </FormControl>
+                                {filterType === 'disable' ?
+                                    <div></div>
+                                    : <FormControl>
+                                        <InputLabel id="demo-simple-select-label">{filterType}</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                label="num"
+                                                value={select}
+                                                onChange={handleSelectChange}
+                                            >
+                                                <MenuItem value="None">None</MenuItem>
+                                                {filterList.map((result) => (
+                                                    <MenuItem value={result}>{result}</MenuItem>
+                                                ))}
+                                            </Select>
+                                    </FormControl>
+                                }
+                            </Stack>
+                            {/*<FormControlLabel control={<Checkbox defaultChecked />} label="Singer" />
+                            <FormControlLabel control={<Checkbox />} label="Album" />
+                            <FormControlLabel control={<Checkbox />} label="Type" /><br/><br/>*/}
                             <Button variant={"contained"} onClick={e => back()}>return to main page</Button>
                         </Typography>
                     </Container>
@@ -231,32 +320,43 @@ export default function SearchPage() {
                                             </Typography>
                                         </Grid>
                                         <Grid item>
-                                            <Button size="medium" variant='outlined' onClick={e => toDetail(result.id)}>View</Button>
+                                            {/* <Button size="medium" variant='outlined' onClick={e => toDetail(result.id)}>View</Button> */}
+                                            <Button size="medium" variant='outlined' onClick={handleClickOpen(result)}>Whole lyrics</Button>
                                         </Grid>
-                                        {/* <ExpandMore
-                                            expand={expanded}
-                                            onClick={handleExpandClick}
-                                            aria-expanded={result.song_id}
-                                            aria-label="show more"
-                                            >
-                                            <ExpandMoreIcon />
-                                        </ExpandMore> */}
                                     </Grid>
                                 </Grid>
-                                {/* <Collapse in={expanded} timeout="auto" unmountOnExit>
-                                    <CardContent>
-                                        {result.lyrics.map(function(r) {
-                                            return (
-                                                <Typography>
-                                                    {r}
-                                                </Typography>
-                                            )
-                                        })}
-                                    </CardContent>
-                                </Collapse> */}
                             </Grid>
                         </Paper>
                     ))
+                }
+                { open ?
+                    <Dialog
+                        open={open}
+                        onClose={handleClose}
+                        scroll="paper"
+                        aria-labelledby="scroll-dialog-title"
+                        aria-describedby="scroll-dialog-description"
+                    >
+                        <DialogTitle id="scroll-dialog-title">
+                            {content.song_name}
+                        </DialogTitle>
+                        <DialogContent>
+                            Singer Name: {content.artist_name}
+                            <DialogContentText>
+                                {content.lyrics.map(function(r) {
+                                    return (
+                                        <Typography>
+                                            {r}
+                                        </Typography>
+                                    )
+                                })}
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleClose}>Cancel</Button>
+                        </DialogActions>
+                    </Dialog>
+                    : <div></div>
                 }
                 <Stack direction="row" spacing={2} sx={{mt: 10}} justifyContent="center">
                     <Pagination
