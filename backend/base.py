@@ -6,7 +6,7 @@ api = Flask(__name__)
 @api.route('/profile/<searchResult>')
 def my_profile(searchResult):
     results = search_result(searchResult)[0]
-    return jsonify(results['results'])
+    return jsonify(results)
 
 @api.route('/whole/<id>')
 def wholeLyrics(id):
