@@ -11,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import InputLabel from '@mui/material/InputLabel';
@@ -58,6 +57,16 @@ const Img = styled('img')({
     maxHeight: '100%',
 });
 
+class RegExp1 extends RegExp {
+    [Symbol.match](str) {
+      const result = RegExp.prototype[Symbol.match].call(this, str);
+      if (result) {
+        return 'VALID';
+      }
+      return 'INVALID';
+    }
+}
+
 export default function SearchPage() {
 
     const [offset, setOffset] = useState(0);
@@ -71,10 +80,11 @@ export default function SearchPage() {
     const [filterList, setFilterList] = useState([{}]);
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState([{}]);
-    const [filterType, setFilterType] = useState('disable');
+    const [filterType, setFilterType] = useState('all');
     const [select, setSelect] = useState('None');
     const [data, setData] = useState([{}]);
     const [searchType, setSearchType] = useState('');
+    const [input, setInput] = useState(false);
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
@@ -118,6 +128,9 @@ export default function SearchPage() {
                 case "category":
                     setProfileData(genresFilter[event.target.value]);
                     break;
+                case "all":
+                    setProfileData(data["results"]);
+                    break;
                 default:
                     break;
             }
@@ -149,6 +162,7 @@ export default function SearchPage() {
     };
 
     useEffect(() => {
+        setSearchContent(location.state.query)
         async function getSearchResult(state) {
             setSearchType(state.type)
             axios({
@@ -159,6 +173,7 @@ export default function SearchPage() {
                 setData(response.data)
                 setProfileData(response.data['results'])
                 setLoading(false)
+                setInput(false)
                 setArtistFilter(response.data['artist_name'][0])
                 setAlbumFilter(response.data['album_name'][0])
                 setGenresFilter(response.data['genres'][0])
@@ -172,13 +187,11 @@ export default function SearchPage() {
             })
         }
         getSearchResult(location.state);
-        console.log(profileData);
-        console.log(artistFilter);
-        console.log(Object.keys(artistFilter))
     }, [])
 
     function getSearchResultData() {
         setLoading(true)
+        setInput(false)
         setSelect("None")
         setFilterType("disable")
         axios({
@@ -201,6 +214,25 @@ export default function SearchPage() {
                 console.log(error.response.headers)
             }
         })
+    }
+
+    const changeInput = (event) => {
+        setSearchContent(event.target.value);
+        setInput(true)
+    }
+
+    const Highlighted = ({text = '', highlight = ''}) => {
+        const list = highlight.replaceAll(" ", "|\\b")
+        const t = text.replaceAll(" ", "* *")
+        const textList = t.split("*")
+        return (
+            <span>
+                {textList.map((t, i) => (
+                    t.match(new RegExp1(`\\b${list}+`, "gi")) === 'VALID' ? 
+                        <mark key={i}>{t}</mark> : <span key={i}>{t}</span>
+                ))}
+            </span>
+        )
     }
 
     return (
@@ -235,9 +267,9 @@ export default function SearchPage() {
                                             getSearchResultData()
                                         }
                                     }}
-                                    required type="text" defaultValue={location.state.query} 
+                                    required type="text" defaultValue={searchContent} 
                                     placeholder="Input a query" className={"App-input-search"}
-                                    onChange={e => setSearchContent(e.target.value)}/>
+                                    onChange={changeInput}/>
                                 <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
                                     <SearchIcon />
                                 </IconButton>
@@ -280,23 +312,28 @@ export default function SearchPage() {
                             sx={{mt: 5}}
                         >
                             Song Results<br/>
-                            <Stack spacing={2} justifyContent="center">
-                                <FormControl>
-                                    {/*<FormLabel id="demo-row-radio-buttons-group-label">Filter</FormLabel>*/}
-                                    <RadioGroup
-                                        row
-                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                        name="row-radio-buttons-group"
-                                        value={filterType}
-                                        onChange={handleRadioChange}
-                                    >
-                                        <FormControlLabel value="singer" control={<Radio />} label="Singer" />
-                                        <FormControlLabel value="album" control={<Radio />} label="Album" />
-                                        <FormControlLabel value="category" control={<Radio />} label="Category" />
-                                        <FormControlLabel value="disabled" disabled control={<Radio />} label="other"/>
-                                    </RadioGroup>
-                                </FormControl>
-                                {filterType === 'disable' ?
+                            {loading ? 
+                                <div></div>
+                            :
+                            <Stack justifyContent="center">
+                                <Grid>
+                                    <FormControl>
+                                        {/*<FormLabel id="demo-row-radio-buttons-group-label">Filter</FormLabel>*/}
+                                        <RadioGroup
+                                            row
+                                            aria-labelledby="demo-row-radio-buttons-group-label"
+                                            name="row-radio-buttons-group"
+                                            value={filterType}
+                                            onChange={handleRadioChange}
+                                        >
+                                            <FormControlLabel value="singer" control={<Radio />} label="Singer" />
+                                            <FormControlLabel value="album" control={<Radio />} label="Album" />
+                                            <FormControlLabel value="category" control={<Radio />} label="Category" />
+                                            <FormControlLabel value="all" control={<Radio />} label="All"/>
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Grid>
+                                {filterType === 'all' ?
                                     <div></div>
                                     : <FormControl>
                                         <InputLabel id="demo-simple-select-label">{filterType}</InputLabel>
@@ -314,7 +351,7 @@ export default function SearchPage() {
                                             </Select>
                                     </FormControl>
                                 }
-                            </Stack>
+                            </Stack>}
                             {/*<FormControlLabel control={<Checkbox defaultChecked />} label="Singer" />
                             <FormControlLabel control={<Checkbox />} label="Album" />
                             <FormControlLabel control={<Checkbox />} label="Type" /><br/><br/>*/}
@@ -325,6 +362,7 @@ export default function SearchPage() {
                 {loading ? 
                     Array.apply(null, { length: 5 }).map((e, i) => (
                         <Paper
+                            key={i}
                             sx={{
                                 margin: 'auto',
                                 maxWidth: 1000,
@@ -335,8 +373,9 @@ export default function SearchPage() {
                             <Skeleton animation="wave" variant="rect" width={1000} height={220} className="skeleton-card" />
                         </Paper>
                     ))
-                    : profileData.slice(offset, offset + perpage).map((result) => (
+                    : profileData.slice(offset, offset + perpage).map((result, i) => (
                         <Paper
+                            key={i}
                             sx={{
                                 p: 2,
                                 margin: 'auto',
@@ -361,7 +400,9 @@ export default function SearchPage() {
                                                 Singer Name: {result.artist_name}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
-                                                {result.mark_lyric}
+                                                {input ? result.mark_lyric
+                                                    : <Highlighted text={result.mark_lyric} highlight={searchContent}/>
+                                                }
                                             </Typography>
                                         </Grid>
                                         <Grid item>
