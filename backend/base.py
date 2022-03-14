@@ -3,8 +3,10 @@ from phrase_search import search_result
 
 api = Flask(__name__)
 
-@api.route('/profile/<searchResult>')
-def my_profile(searchResult):
+@api.route('/profile')
+def my_profile():
+    searchResult = request.args.get('query')
+    type = request.args.get('type')
     results = search_result(searchResult)[0]
     return jsonify(results)
 

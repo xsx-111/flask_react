@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './App.css';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -30,10 +31,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
-import FormLabel from '@mui/material/FormLabel';
 import { useEffect, useState } from 'react';
 import axios from "axios";
-import { generatePath, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Copyright() {
     return (
@@ -73,7 +73,8 @@ export default function SearchPage() {
     const [content, setContent] = useState([{}]);
     const [filterType, setFilterType] = useState('disable');
     const [select, setSelect] = useState('None');
-    const [data, setData] = useState([{}])
+    const [data, setData] = useState([{}]);
+    const [searchType, setSearchType] = useState('');
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
@@ -143,11 +144,16 @@ export default function SearchPage() {
         setOpen(false);
     };
 
+    const handleTypeChange = (event) => {
+        setSearchType(event.target.value);
+    };
+
     useEffect(() => {
         async function getSearchResult(state) {
+            setSearchType(state.type)
             axios({
                 method: "GET",
-                url: `/profile/${state}`,
+                url: `/profile?query=${state.query}&type=${searchType}`,
             })
             .then((response) => {
                 setData(response.data)
@@ -177,7 +183,7 @@ export default function SearchPage() {
         setFilterType("disable")
         axios({
             method: "GET",
-            url: `/profile/${searchContent}`,
+            url: `/profile?query=${searchContent}&type=${searchType}`,
         })
         .then((response) => {
             setData(response.data)
@@ -202,20 +208,59 @@ export default function SearchPage() {
             <CssBaseline />
             <AppBar position="relative">
                 <Toolbar>
-                    <Paper
+                    <Stack direction="row" spacing={2} justifyContent="center" sx={{mt:2, mb:2}}>
+                        <Box sx={{ width: 70, height: 20, mr: 8 }}>
+                            <FormControl>
+                                <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={searchType}
+                                        label="num"
+                                        onChange={handleTypeChange}
+                                    >
+                                        <MenuItem value={"Lyrics"}>Lyrics</MenuItem>
+                                        <MenuItem value={"song_name_preprocess"}>Song Name</MenuItem>
+                                        <MenuItem value={"album_name_preprocess"}>Album Name</MenuItem>
+                                        <MenuItem value={"artist_name_preprocess"}>Singer Name</MenuItem>
+                                        <MenuItem value={"genres_preprocess"}>Genres</MenuItem>
+                                    </Select>
+                            </FormControl>
+                        </Box>
+                        <Grid>
+                            <div>
+                                <input 
+                                    onKeyPress={(event) => {
+                                        if (event.key === 'Enter') {
+                                            getSearchResultData()
+                                        }
+                                    }}
+                                    required type="text" defaultValue={location.state.query} 
+                                    placeholder="Input a query" className={"App-input-search"}
+                                    onChange={e => setSearchContent(e.target.value)}/>
+                                <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
+                                    <SearchIcon />
+                                </IconButton>
+                                {/* <button onClick={e => getSearchResultData()} className={"App-submit"}> 
+                                    Search 
+                                </button> */}
+                            </div>
+                        </Grid>
+                    </Stack>
+                    {/* <Paper
                         component="form"
                         sx={{ bgcolor: '#efd697', p: '2px 4px', display: 'flex', alignItems: 'center', width: 550 }}
                     >
                         <InputBase
                             sx={{ ml: 1, flex: 1 }}
                             placeholder="input lyrics you want to search"
-                            defaultValue={location.state}
+                            defaultValue={location.state.query}
                             onChange={e => setSearchContent(e.target.value)}
                         />
                         <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
                             <SearchIcon />
                         </IconButton>
-                    </Paper>
+                    </Paper> */}
                 </Toolbar>
             </AppBar>
             <main>
