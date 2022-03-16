@@ -76,7 +76,7 @@ export default function SearchPage() {
     const [loading, setLoading] = useState(true);
     const [artistFilter, setArtistFilter] = useState([{}]);
     const [albumFilter, setAlbumFilter] = useState([{}]);
-    const [genresFilter, setGenresFilter] = useState([{}]);
+    // const [genresFilter, setGenresFilter] = useState([{}]);
     const [filterList, setFilterList] = useState([{}]);
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState([{}]);
@@ -106,9 +106,9 @@ export default function SearchPage() {
             case "album":
                 setFilterList(Object.keys(albumFilter));
                 break;
-            case "category":
-                setFilterList(Object.keys(genresFilter));
-                break;
+            // case "category":
+            //     setFilterList(Object.keys(genresFilter));
+            //     break;
             default:
                 break;
         }
@@ -125,9 +125,9 @@ export default function SearchPage() {
                 case "album":
                     setProfileData(albumFilter[event.target.value]);
                     break;
-                case "category":
-                    setProfileData(genresFilter[event.target.value]);
-                    break;
+                // case "category":
+                //     setProfileData(genresFilter[event.target.value]);
+                //     break;
                 case "all":
                     setProfileData(data["results"]);
                     break;
@@ -163,11 +163,11 @@ export default function SearchPage() {
 
     useEffect(() => {
         setSearchContent(location.state.query)
+        setSearchType(location.state.type)
         async function getSearchResult(state) {
-            setSearchType(state.type)
             axios({
                 method: "GET",
-                url: `/profile?query=${state.query}&type=${searchType}`,
+                url: `/profile?query=${state.query}&type=${state.type}`,
             })
             .then((response) => {
                 setData(response.data)
@@ -176,7 +176,7 @@ export default function SearchPage() {
                 setInput(false)
                 setArtistFilter(response.data['artist_name'][0])
                 setAlbumFilter(response.data['album_name'][0])
-                setGenresFilter(response.data['genres'][0])
+                // setGenresFilter(response.data['genres'][0])
                 console.log(response.data)
             }).catch((error) => {
                 if (error.response) {
@@ -203,7 +203,7 @@ export default function SearchPage() {
             setProfileData(response.data['results'])
             setArtistFilter(response.data['artist_name'][0])
             setAlbumFilter(response.data['album_name'][0])
-            setGenresFilter(response.data['genres'][0])
+            // setGenresFilter(response.data['genres'][0])
             setOffset(0)
             setLoading(false)
             console.log(response.data)
@@ -251,11 +251,10 @@ export default function SearchPage() {
                                         label="num"
                                         onChange={handleTypeChange}
                                     >
-                                        <MenuItem value={"Lyrics"}>Lyrics</MenuItem>
+                                        <MenuItem value={"lyrics"}>Lyrics</MenuItem>
                                         <MenuItem value={"song_name_preprocess"}>Song Name</MenuItem>
                                         <MenuItem value={"album_name_preprocess"}>Album Name</MenuItem>
                                         <MenuItem value={"artist_name_preprocess"}>Singer Name</MenuItem>
-                                        <MenuItem value={"genres_preprocess"}>Genres</MenuItem>
                                     </Select>
                             </FormControl>
                         </Box>
@@ -328,7 +327,7 @@ export default function SearchPage() {
                                         >
                                             <FormControlLabel value="singer" control={<Radio />} label="Singer" />
                                             <FormControlLabel value="album" control={<Radio />} label="Album" />
-                                            <FormControlLabel value="category" control={<Radio />} label="Category" />
+                                            {/* <FormControlLabel value="category" control={<Radio />} label="Category" /> */}
                                             <FormControlLabel value="all" control={<Radio />} label="All"/>
                                         </RadioGroup>
                                     </FormControl>
@@ -370,7 +369,7 @@ export default function SearchPage() {
                                 marginTop: 3,
                             }}
                         >
-                            <Skeleton animation="wave" variant="rect" width={1000} height={220} className="skeleton-card" />
+                            <Skeleton animation="wave" variant="rect" width={1000} height={250} className="skeleton-card" />
                         </Paper>
                     ))
                     : profileData.slice(offset, offset + perpage).map((result, i) => (
@@ -393,16 +392,28 @@ export default function SearchPage() {
                                 <Grid item xs={12} sm container>
                                     <Grid item xs container direction="column" spacing={2}>
                                         <Grid item xs>
-                                            <Typography gutterBottom variant="h4" component="div">
+                                            <Typography variant="h4" component="div">
                                                 {result.song_name}
                                             </Typography>
-                                            <Typography variant="h6" gutterBottom>
-                                                Singer Name: {result.artist_name}
+                                            <Typography variant="body1">
+                                                <b>Singer Name:</b> {result.artist_name}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <b>Album Name:</b> {result.album_name}
+                                            </Typography>
+                                            <Typography variant="body1">
+                                                <b>Genres:</b> {result.genres}
+                                            </Typography>
+                                            <Typography variant="body1" gutterBottom>
+                                                <b>Release Date:</b> {result.release_date}
                                             </Typography>
                                             <Typography variant="body2" color="text.secondary">
-                                                {input ? result.mark_lyric
-                                                    : <Highlighted text={result.mark_lyric} highlight={searchContent}/>
-                                                }
+                                                <b>Part Lyrics: </b>
+                                                {searchType !== 'lyrics' ?
+                                                    result.mark_lyric
+                                                : input ? result.mark_lyric
+                                                : <Highlighted text={result.mark_lyric} highlight={searchContent}/> }
+                                                
                                             </Typography>
                                         </Grid>
                                         <Grid item>
@@ -427,9 +438,21 @@ export default function SearchPage() {
                             {content.song_name}
                         </DialogTitle>
                         <DialogContent>
-                            Singer Name: {content.artist_name}
+                            <Typography>
+                                <b>Singer Name:</b> {content.artist_name}
+                            </Typography>
+                            <Typography>
+                                <b>Album Name:</b> {content.album_name}
+                            </Typography>
+                            <Typography>
+                                <b>Genres:</b> {content.genres}
+                            </Typography>
+                            <Typography>
+                                <b>Release Date:</b> {content.release_date}
+                            </Typography>
+                            <b>Whole Lyris:</b>
                             <DialogContentText>
-                                {content.lyrics.map(function(r) {
+                                {content.all_lyrics.map(function(r) {
                                     return (
                                         <Typography>
                                             {r}

@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
-from phrase_search import search_result
+from search_314 import search_result
 
 api = Flask(__name__)
 
 @api.route('/profile')
 def my_profile():
     searchResult = request.args.get('query')
-    type = request.args.get('type')
-    results = search_result(searchResult)[0]
+    typeName = request.args.get('type')
+    print(typeName)
+    results = search_result(searchResult, typeName)[0]
     return jsonify(results)
 
 @api.route('/whole/<id>')
