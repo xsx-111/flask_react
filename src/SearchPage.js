@@ -193,7 +193,7 @@ export default function SearchPage() {
         setLoading(true)
         setInput(false)
         setSelect("None")
-        setFilterType("disable")
+        setFilterType("all")
         axios({
             method: "GET",
             url: `/profile?query=${searchContent}&type=${searchType}`,
@@ -328,7 +328,7 @@ export default function SearchPage() {
                                             <FormControlLabel value="singer" control={<Radio />} label="Singer" />
                                             <FormControlLabel value="album" control={<Radio />} label="Album" />
                                             {/* <FormControlLabel value="category" control={<Radio />} label="Category" /> */}
-                                            <FormControlLabel value="all" control={<Radio />} label="All"/>
+                                            <FormControlLabel value="all" control={<Radio />} label="All Result"/>
                                         </RadioGroup>
                                     </FormControl>
                                 </Grid>
@@ -393,13 +393,27 @@ export default function SearchPage() {
                                     <Grid item xs container direction="column" spacing={2}>
                                         <Grid item xs>
                                             <Typography variant="h4" component="div">
-                                                {result.song_name}
+                                                {/* {result.song_name} */}
+                                                {searchType !== 'song_name_preprocess' ?
+                                                    result.song_name
+                                                    : input ? result.song_name
+                                                    : <Highlighted text={result.song_name} highlight={searchContent}/> }
                                             </Typography>
                                             <Typography variant="body1">
-                                                <b>Singer Name:</b> {result.artist_name}
+                                                <b>Singer Name:</b> 
+                                                {searchType !== 'artist_name_preprocess' ?
+                                                    result.artist_name
+                                                    : input ? result.artist_name
+                                                    : <Highlighted text={result.artist_name} highlight={searchContent}/> }
+                                                {/* {result.artist_name} */}
                                             </Typography>
                                             <Typography variant="body1">
-                                                <b>Album Name:</b> {result.album_name}
+                                                <b>Album Name:</b>
+                                                {searchType !== 'album_name_preprocess' ?
+                                                    result.album_name
+                                                    : input ? result.album_name
+                                                    : <Highlighted text={result.album_name} highlight={searchContent}/> }
+                                                 {/* {result.album_name} */}
                                             </Typography>
                                             <Typography variant="body1">
                                                 <b>Genres:</b> {result.genres}
@@ -413,7 +427,6 @@ export default function SearchPage() {
                                                     result.mark_lyric
                                                 : input ? result.mark_lyric
                                                 : <Highlighted text={result.mark_lyric} highlight={searchContent}/> }
-                                                
                                             </Typography>
                                         </Grid>
                                         <Grid item>
