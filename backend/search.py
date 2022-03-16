@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 from collections import defaultdict
 from http import client
 from bson.objectid import ObjectId
@@ -82,27 +85,33 @@ def lyrics_search_result(raw_text):
         res_id = [209419,310125,308772,204200,311258,217207,165570,165572,358852,6491,318733,
                       99478,345534,5030,165541,116832,253636,285393,83942,27092]
         for song_id in res_id:
+            
             song_output={}
             song_output = songs_info.find({'song_id':song_id})[0]
             song_output.pop('_id')
             lyrics_list=list(song_output['lyrics'][0].values())
             song_output['all_lyrics']=lyrics_list
             song_output['mark_lyric']=lyrics_list[0] #取第一句
+            song_output.pop('lyrics')
             #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id})[0]['sentence']
             outputs['results'].append(song_output) #推荐歌单信息popularity
             
     elif case in [1,4,5]:
-        song_score_dic = tfidf_score(common_dict)
-        res_id = ranked_phrase_search(song_score_dic,number_results)
-        for song_id in res_id:
-            song_output={}
-            song_output = songs_info.find({'song_id':song_id})[0]
-            song_output.pop('_id')
-            sen_id  = str(list(common_dict[song_id])[0])
-            song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-            song_output['mark_lyric']=song_output['lyrics'][0][sen_id]
-            #song_output['mark_lyric']=sentences.find({'sentence_id': sen_id})[0]['sentence']
-            outputs['results'].append(song_output)
+            song_score_dic = tfidf_score(common_dict)
+            res_id = ranked_phrase_search(song_score_dic,number_results)
+            for song_id in res_id:
+                try:
+                    song_output={}
+                    song_output = songs_info.find({'song_id':song_id})[0]
+                    song_output.pop('_id')
+                    sen_id  = str(list(common_dict[song_id])[0])
+                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id]
+                    #song_output['mark_lyric']=sentences.find({'sentence_id': sen_id})[0]['sentence']
+                    song_output.pop('lyrics')
+                    outputs['results'].append(song_output)
+                except:
+                    pass
     
     
     elif case == 2:
@@ -112,14 +121,17 @@ def lyrics_search_result(raw_text):
             song_score_dic1 = tfidf_score(common_dict)
             res_id1 = ranked_phrase_search(song_score_dic1,number_results)
             for song_id in res_id1:
-                song_output={}
-                song_output = songs_info.find({'song_id':song_id})[0]
-                song_output.pop('_id')
-                sen_id  = str(list(common_dict[song_id])[0])
-                song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-                song_output['mark_lyric']=song_output['lyrics'][0][sen_id]
-                
-                outputs['results'].append(song_output)
+                try:
+                    song_output={}
+                    song_output = songs_info.find({'song_id':song_id})[0]
+                    song_output.pop('_id')
+                    sen_id  = str(list(common_dict[song_id])[0])
+                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id]  
+                    song_output.pop('lyrics')
+                    outputs['results'].append(song_output)
+                except:
+                    pass
         
         count_list=sorted(list(left_common_dict.keys()),reverse=True)
         res_count=[len(left_common_dict[i]) for i in count_list]
@@ -129,13 +141,17 @@ def lyrics_search_result(raw_text):
             song_score_dic2 = tfidf_score(temp_common_dict)
             res_id2=ranked_phrase_search(song_score_dic2,number_results)
             for song_id in res_id2:
-                song_output={}
-                song_output = songs_info.find({'song_id':song_id})[0]
-                song_output.pop('_id')
-                sen_id  = str(list(temp_common_dict[song_id])[0])
-                song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-                song_output['mark_lyric']=song_output['lyrics'][0][sen_id]
-                outputs['results'].append(song_output)
+                try:
+                    song_output={}
+                    song_output = songs_info.find({'song_id':song_id})[0]
+                    song_output.pop('_id')
+                    sen_id  = str(list(temp_common_dict[song_id])[0])
+                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id]
+                    song_output.pop('lyrics')
+                    outputs['results'].append(song_output)
+                except:
+                    pass
             left_num_result-=count
             if left_num_result<0:
                 break
@@ -147,14 +163,18 @@ def lyrics_search_result(raw_text):
             song_score_dic1 = tfidf_score(common_dict)
             res_id1 = ranked_phrase_search(song_score_dic1,number_results)
             for song_id1 in res_id1:
-                song_output={}
-                song_output = songs_info.find({'song_id':song_id1})[0]
-                song_output.pop('_id')
-                sen_id1  = str(list(common_dict[song_id1])[0])
-                song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-                song_output['mark_lyric']=song_output['lyrics'][0][sen_id1]
-                #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id1})[0]['sentence']
-                outputs['results'].append(song_output)
+                try: 
+                    song_output={}
+                    song_output = songs_info.find({'song_id':song_id1})[0]
+                    song_output.pop('_id')
+                    sen_id1  = str(list(common_dict[song_id1])[0])
+                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id1]
+                    song_output.pop('lyrics')
+                    #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id1})[0]['sentence']
+                    outputs['results'].append(song_output)
+                except:
+                    pass
                 
             
         
@@ -168,15 +188,18 @@ def lyrics_search_result(raw_text):
             res_id2=ranked_phrase_search(song_score_dic2,number_results)
             
             for song_id2 in res_id2:
-                song_output={}
-                song_output = songs_info.find({'song_id':song_id2})[0]
-                song_output.pop('_id')
-                sen_id2  = str(list(temp_common_dict[song_id2])[0])
-                song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-                song_output['mark_lyric']=song_output['lyrics'][0][sen_id2]
-                #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id2})[0]['sentence']
-                outputs['results'].append(song_output)
-        
+                try:
+                    song_output={}
+                    song_output = songs_info.find({'song_id':song_id2})[0]
+                    song_output.pop('_id')
+                    sen_id2  = str(list(temp_common_dict[song_id2])[0])
+                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id2]
+                    song_output.pop('lyrics')
+                    #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id2})[0]['sentence']
+                    outputs['results'].append(song_output)
+                except:
+                    pass
                 
                 
 #         # 仅部分词在同一首歌
@@ -191,14 +214,19 @@ def lyrics_search_result(raw_text):
                 song_score_dic3 = tfidf_score(temp_common_dict)
                 res_id3=ranked_phrase_search(song_score_dic3,number_results)    
                 for song_id3 in res_id3:
-                    song_output={}
-                    song_output = songs_info.find({'song_id':song_id3})[0]
-                    song_output.pop('_id')
-                    sen_id3  = str(list(temp_common_dict[song_id3])[0])
-                    song_output['all_lyrics']=list(song_output['lyrics'][0].values())
-                    song_output['mark_lyric']=song_output['lyrics'][0][sen_id3]
-                    #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id3})[0]['sentence']
-                    outputs['results'].append(song_output)
+                    try: 
+                        song_output={}
+                        song_output = songs_info.find({'song_id':song_id3})[0]
+                        song_output.pop('_id')
+                        sen_id3  = str(list(temp_common_dict[song_id3])[0])
+                        song_output['all_lyrics']=list(song_output['lyrics'][0].values())
+                        song_output['mark_lyric']=song_output['lyrics'][0][sen_id3]
+                        song_output.pop('lyrics')
+                        #song_output['mark_lyric'] = sentences.find({'sentence_id': sen_id3})[0]['sentence']
+                        outputs['results'].append(song_output)
+                    except:
+                        pass
+                                       
                 if lyr_count >= left_num:
                     break
                 else:
@@ -501,39 +529,48 @@ def advance_output(query_advance,this_search_name):
     number_results=20
     search_terms,raw_term = query_preprossing(query_advance)
     
-    res_id,term_not_found_ind= advance_search(this_search_name,search_terms,number_results)
+    case,res_id,term_not_found_ind,res_exact= advance_search(this_search_name,search_terms,number_results)
     outputs=defaultdict(list)
     
-    if len(res_id) >0:
-        for song_id in res_id:
-            song_output = {}
-            song_output = songs_info.find({'song_id':int(song_id)})[0]
-            song_output.pop('_id')
-            lyrics_list=list(song_output['lyrics'][0].values())
-            song_output['all_lyrics']=lyrics_list
-            song_output['mark_lyric']=lyrics_list[0]
-            outputs['results'].append(song_output)
-            
-    else: #啥都搜不出来 用写死的歌单
-        res_id = [209419,310125,308772,204200,311258,217207,165570,165572,358852,6491,318733,
-                      99478,345534,5030,165541,116832,253636,285393,83942,27092]
-        for song_id in res_id:
-            song_output = {}
-            song_output = songs_info.find({'song_id':song_id})[0]
-            song_output.pop('_id')
-            lyrics_list=list(song_output['lyrics'][0].values())
-            song_output['all_lyrics']=lyrics_list
-            song_output['mark_lyric']=lyrics_list[0]
-            outputs['results'].append(song_output)
+    if case==0:
+        outputs['results']=res_exact
         
-    
+    elif case==1:
+        if len(res_id) >0:
+            for song_id in res_id:
+                try:
+                    song_output = {}
+                    song_output = songs_info.find({'song_id':int(song_id)})[0]
+                    song_output.pop('_id')
+                    lyrics_list=list(song_output['lyrics'][0].values())
+                    song_output['all_lyrics']=lyrics_list
+                    song_output['mark_lyric']=lyrics_list[0]
+                    song_output.pop('lyrics')
+                    outputs['results'].append(song_output)
+                except:
+                    pass
+
+        else: #啥都搜不出来 用写死的歌单
+            res_id = [209419,310125,308772,204200,311258,217207,165570,165572,358852,6491,318733,
+                          99478,345534,5030,165541,116832,253636,285393,83942,27092]
+            for song_id in res_id:
+                song_output = {}
+                song_output = songs_info.find({'song_id':song_id})[0]
+                song_output.pop('_id')
+                lyrics_list=list(song_output['lyrics'][0].values())
+                song_output.pop('lyrics')
+                song_output['all_lyrics']=lyrics_list
+                song_output['mark_lyric']=lyrics_list[0]
+                outputs['results'].append(song_output)
+
+
     if len(term_not_found_ind) > 0:
         term_not_found = [raw_term[ind] for ind in term_not_found_ind]
         output_info = list(term_not_found)
-        
+
     else:
         output_info=[]
-        
+
     artist_filter=result_filter(outputs['results'],'artist_name')
     outputs['artist_name'].append(artist_filter)
     album_filter=result_filter(outputs['results'],'album_name')
@@ -555,15 +592,12 @@ def advance_search(this_search_name,search_terms,number_results):
     popularity_dic={} # {songid:popularity}
     songid_exact_list = []                
     exact_search_cursors=songs_info.find({this_search_name:search_terms})
+    res_exact=[]
+    
     try:
-        exact_search_cursors[0] # 看能否搜得到，搜不到会报Index Error
-        for exact_song_dict in exact_search_cursors:
-            exact_sid=exact_song_dict['song_id']
-            songid_exact_list.append(exact_sid)
-            popularity_dic[exact_sid]=exact_song_dict['pageviews']      
-        res_id = ranked_advance_search(popularity_dic,number_results)
-        
-    except IndexError:
+         # 看能否搜得到，搜不到会报Index Error
+        exact_search_cursors[0]
+    except:
         # 精确搜索完全不出来：模糊搜索
         
         #inv_ind_songname {term: [songid1,songid2,...]}
@@ -571,7 +605,7 @@ def advance_search(this_search_name,search_terms,number_results):
         #inv_ind_album {term: {'album1':[sid1,sid2,...]}}
 
         
-
+        case=1
         if this_search_name=='song_name_preprocess':
             count_dict = defaultdict(dict)
             songid_list_vag=[]
@@ -581,7 +615,7 @@ def advance_search(this_search_name,search_terms,number_results):
                     songid_list_vag+=list(term_dict.keys())
                     for key in term_dict.keys():
                         popularity_dic[key]=term_dict[key]
-                except IndexError:
+                except:
                     term_not_found_ind.append(ind)
                     
             if len(songid_list_vag) > 0:
@@ -627,7 +661,7 @@ def advance_search(this_search_name,search_terms,number_results):
                     for name in name_keys:
                         name_dict[name]=term_dict[datatype][name]
                         
-                except IndexError:
+                except:
                     term_not_found_ind.append(ind)
             
             
@@ -649,9 +683,26 @@ def advance_search(this_search_name,search_terms,number_results):
                     res_id+=ranked_advance_search(sid_popu_dict,number_results) 
                     if len(res_id)>number_results:
                         break
-                           
+            elif len(name_list)==0:
+                res_id = [209419,310125,308772,204200,311258,217207,165570,165572,358852,6491,318733,
+                          99478,345534,5030,165541,116832,253636,285393,83942,27092]
 
-    return res_id,term_not_found_ind
+        return case,res_id,term_not_found_ind,res_exact
+    
+    else:
+        #精确搜索
+        case=0
+        for exact_song_dict in exact_search_cursors:
+            try:
+                lyrics_list=list(exact_song_dict['lyrics'][0].values())
+                exact_song_dict.pop('lyrics')
+                exact_song_dict.pop('_id')
+                exact_song_dict['all_lyrics']=lyrics_list
+                exact_song_dict['mark_lyric']=lyrics_list[0]
+                res_exact.append(exact_song_dict)
+            except:
+                pass
+        return case,[],[],res_exact
 
 def ranked_advance_search(popularity_dic,number_results):
     #返回songs id的前几个
@@ -663,6 +714,16 @@ def get_top(popularity_dic,number_results):
         # return a list of (id, score) tuples, sorted from highest to lowest by score (e.g. [(19, 1.5), (6, 1.46), ...]
         return [(id, popularity) for id, popularity in sorted(popularity_dic.items(), key=lambda item: item[1], reverse=True)][0:number_results]
  
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[2]:
 
 
 # 歌词搜索
@@ -687,23 +748,65 @@ def get_top(popularity_dic,number_results):
 # raw_text='abcdos' #3s
 # #raw_text='phrasesea, abcdos' #3s
 
+
+# In[ ]:
+
+
+
+
+
+# In[29]:
+
+
 # advance search
 # import time
 # s=time.time()
-
-# #raw_text='phrasesea, abcdos'
+#raw_text='phrasesea, abcdos'
 # raw_text='Share Your Love With Little Prayer'
-# raw_text='wild wind four woman'
-# raw_text='Nina Sarah'
+#raw_text='Stairway to Heaven'
+# raw_text='Greatest Hits'
+#raw_text='mayhem'
+#raw_text='Nina Sarah'
 
-# search_type = 'artist_name_preprocess'
+#search_type = 'artist_name_preprocess'
 # search_type = 'album_name_preprocess'
-# search_type = 'song_name_preprocess'
+#search_type = 'song_name_preprocess'
 # search_type = 'lyrics'
 # output,info=search_result(raw_text,search_type)
 # e=time.time()
 
-# print(output)
+
 # print(e-s)
 
 #output['results']
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
