@@ -77,14 +77,17 @@ export default function App() {
                             <div>
                                 <input 
                                     onKeyPress={(event) => {
-                                        if (event.key === 'Enter') {
+                                        if (event.key === 'Enter' && fName !== '') {
                                             getData()
                                         }
                                     }}
-                                    required type="text" placeholder="Type a query" className={"App-input"} onChange={e => setfName(e.target.value)} maxLength={50}/>
-                                <button onClick={e => getData()} className={"App-submit"}> 
-                                    Search 
-                                </button>
+                                    required type="text" placeholder="Type a query (Required)" className={"App-input"} onChange={e => setfName(e.target.value)} maxLength={50}/>
+                                {fName !== '' ?
+                                    <button onClick={e => getData()} className={"App-submit"}> 
+                                        Search 
+                                    </button>
+                                    : <div></div>
+                                }
                             </div>
                         </Grid>
                     </Stack>
