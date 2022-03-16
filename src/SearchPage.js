@@ -436,8 +436,6 @@ export default function SearchPage() {
                     >
                         <DialogTitle id="scroll-dialog-title">
                             {content.song_name}
-                        </DialogTitle>
-                        <DialogContent>
                             <Typography>
                                 <b>Singer Name:</b> {content.artist_name}
                             </Typography>
@@ -450,8 +448,10 @@ export default function SearchPage() {
                             <Typography>
                                 <b>Release Date:</b> {content.release_date}
                             </Typography>
-                            <b>Whole Lyris:</b>
+                        </DialogTitle>
+                        <DialogContent>
                             <DialogContentText>
+                                <b>Whole Lyris:</b>
                                 {content.all_lyrics.map(function(r) {
                                     return (
                                         <Typography>
