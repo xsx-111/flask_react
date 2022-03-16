@@ -504,9 +504,9 @@ export default function SearchPage() {
                                     label="num"
                                     onChange={handleNumChange}
                                 >
-                                    <MenuItem value={5}>5</MenuItem>
-                                    <MenuItem value={10}>10</MenuItem>
-                                    <MenuItem value={20}>20</MenuItem>
+                                    <MenuItem value={5}>-5-</MenuItem>
+                                    <MenuItem value={10}>-10-</MenuItem>
+                                    <MenuItem value={20}>-20-</MenuItem>
                                 </Select>
                         </FormControl>
                     </Box>
