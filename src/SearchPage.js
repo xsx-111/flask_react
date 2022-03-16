@@ -95,13 +95,10 @@ export default function SearchPage() {
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState([{}]);
     const [filterType, setFilterType] = useState('all');
-    const [select, setSelect] = useState('None');
     const [data, setData] = useState([{}]);
     const [searchType, setSearchType] = useState('');
     const [input, setInput] = useState(false);
-    const [multiChose, setMultiChose] = useState('');
     const [personName, setPersonName] = useState([]);
-    const [resultList, setResultList] = useState([{}]);
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
@@ -113,10 +110,8 @@ export default function SearchPage() {
     };
 
     const handleRadioChange = (event) => {
-        setMultiChose("====Please Select=====");
         setFilterType(event.target.value);
         setProfileData(data["results"]);
-        setSelect("None");
         setPersonName([]);
         switch (event.target.value) {
             case "singer":
@@ -183,7 +178,6 @@ export default function SearchPage() {
     function getSearchResultData() {
         setLoading(true)
         setInput(false)
-        setSelect("None")
         setFilterType("all")
         axios({
             method: "GET",
@@ -239,14 +233,18 @@ export default function SearchPage() {
                 prev.map((result) => {
                     artistFilter[result].map((r) => {
                         dict.push(r);
+                        return 0;
                     })
+                    return 0;
                 });
                 setProfileData(dict);
             } else if (filterType === 'album') {
                 prev.map((result) => {
                     albumFilter[result].map((r) => {
                         dict.push(r);
+                        return 0;
                     })
+                    return 0;
                 });
                 setProfileData(dict);
             } else {
@@ -289,7 +287,7 @@ export default function SearchPage() {
                                     }}
                                     required type="text" defaultValue={searchContent} 
                                     placeholder="Input a query" className={"App-input-search"}
-                                    onChange={changeInput}/>
+                                    onChange={changeInput} maxLength={50}/>
                                 <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
                                     <SearchIcon />
                                 </IconButton>

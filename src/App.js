@@ -81,7 +81,7 @@ export default function App() {
                                             getData()
                                         }
                                     }}
-                                    required type="text" placeholder="Type a query" className={"App-input"} onChange={e => setfName(e.target.value)}/>
+                                    required type="text" placeholder="Type a query" className={"App-input"} onChange={e => setfName(e.target.value)} maxLength={50}/>
                                 <button onClick={e => getData()} className={"App-submit"}> 
                                     Search 
                                 </button>
