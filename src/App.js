@@ -30,7 +30,7 @@ function Copyright() {
 export default function App() {
 
   const [fName, setfName] = useState('');
-  const [searchType, setSearchType] = useState('Lyrics');
+  const [searchType, setSearchType] = useState('lyrics');
   const navigate = useNavigate();
 
   const Theme = { palette: { primary: { main: '#f1d692' }, secondary: { main: '#FFFFFF' } } };
@@ -66,11 +66,10 @@ export default function App() {
                                         label="num"
                                         onChange={handleTypeChange}
                                     >
-                                        <MenuItem value={"Lyrics"}>Lyrics</MenuItem>
+                                        <MenuItem value={"lyrics"}>Lyrics</MenuItem>
                                         <MenuItem value={"song_name_preprocess"}>Song Name</MenuItem>
                                         <MenuItem value={"album_name_preprocess"}>Album Name</MenuItem>
                                         <MenuItem value={"artist_name_preprocess"}>Singer Name</MenuItem>
-                                        <MenuItem value={"genres_preprocess"}>Genres</MenuItem>
                                     </Select>
                             </FormControl>
                         </Box>
