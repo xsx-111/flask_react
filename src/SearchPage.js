@@ -250,8 +250,11 @@ export default function SearchPage() {
             } else {
                 setProfileData(data["results"]);
             }
-            setOffset(0);
             return prev;
+        });
+        setOffset(0);
+        setOffset(p => {
+            return p;
         });
     };
 
