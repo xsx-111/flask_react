@@ -30,6 +30,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -67,6 +70,17 @@ class RegExp1 extends RegExp {
     }
 }
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 export default function SearchPage() {
 
     const [offset, setOffset] = useState(0);
@@ -85,6 +99,9 @@ export default function SearchPage() {
     const [data, setData] = useState([{}]);
     const [searchType, setSearchType] = useState('');
     const [input, setInput] = useState(false);
+    const [multiChose, setMultiChose] = useState('');
+    const [personName, setPersonName] = useState([]);
+    const [resultList, setResultList] = useState([{}]);
 
     const handleChange = (event, value) => {
         setOffset(perpage*(value-1));
@@ -96,9 +113,11 @@ export default function SearchPage() {
     };
 
     const handleRadioChange = (event) => {
+        setMultiChose("====Please Select=====");
         setFilterType(event.target.value);
         setProfileData(data["results"]);
         setSelect("None");
+        setPersonName([]);
         switch (event.target.value) {
             case "singer":
                 setFilterList(Object.keys(artistFilter));
@@ -106,38 +125,10 @@ export default function SearchPage() {
             case "album":
                 setFilterList(Object.keys(albumFilter));
                 break;
-            // case "category":
-            //     setFilterList(Object.keys(genresFilter));
-            //     break;
             default:
                 break;
         }
         console.log(filterList);
-    };
-
-    const handleSelectChange = (event) => {
-        setSelect(event.target.value);
-        if (event.target.value !== "None") {
-            switch (filterType) {
-                case "singer":
-                    setProfileData(artistFilter[event.target.value]);
-                    break;
-                case "album":
-                    setProfileData(albumFilter[event.target.value]);
-                    break;
-                // case "category":
-                //     setProfileData(genresFilter[event.target.value]);
-                //     break;
-                case "all":
-                    setProfileData(data["results"]);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            setProfileData(data["results"]);
-        }
-        setOffset(0);
     };
 
     const [profileData, setProfileData] = useState([{}]);
@@ -235,6 +226,36 @@ export default function SearchPage() {
         )
     }
 
+    const handleMultiChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        var v = typeof value === 'string' ? value.split(',') : value;
+        setPersonName(v)
+        setPersonName(prev => {
+            console.log(prev);
+            var dict = [];
+            if (filterType === 'singer') {
+                prev.map((result) => {
+                    artistFilter[result].map((r) => {
+                        dict.push(r);
+                    })
+                });
+                setProfileData(dict);
+            } else if (filterType === 'album') {
+                prev.map((result) => {
+                    albumFilter[result].map((r) => {
+                        dict.push(r);
+                    })
+                });
+                setProfileData(dict);
+            } else {
+                setProfileData(data["results"]);
+            }
+            return prev;
+        });
+    };
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -278,20 +299,6 @@ export default function SearchPage() {
                             </div>
                         </Grid>
                     </Stack>
-                    {/* <Paper
-                        component="form"
-                        sx={{ bgcolor: '#efd697', p: '2px 4px', display: 'flex', alignItems: 'center', width: 550 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="input lyrics you want to search"
-                            defaultValue={location.state.query}
-                            onChange={e => setSearchContent(e.target.value)}
-                        />
-                        <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
-                            <SearchIcon />
-                        </IconButton>
-                    </Paper> */}
                 </Toolbar>
             </AppBar>
             <main>
@@ -317,7 +324,6 @@ export default function SearchPage() {
                             <Stack justifyContent="center">
                                 <Grid>
                                     <FormControl>
-                                        {/*<FormLabel id="demo-row-radio-buttons-group-label">Filter</FormLabel>*/}
                                         <RadioGroup
                                             row
                                             aria-labelledby="demo-row-radio-buttons-group-label"
@@ -327,7 +333,6 @@ export default function SearchPage() {
                                         >
                                             <FormControlLabel value="singer" control={<Radio />} label="Singer" />
                                             <FormControlLabel value="album" control={<Radio />} label="Album" />
-                                            {/* <FormControlLabel value="category" control={<Radio />} label="Category" /> */}
                                             <FormControlLabel value="all" control={<Radio />} label="All Result"/>
                                         </RadioGroup>
                                     </FormControl>
@@ -335,25 +340,30 @@ export default function SearchPage() {
                                 {filterType === 'all' ?
                                     <div></div>
                                     : <FormControl>
-                                        <InputLabel id="demo-simple-select-label">{filterType}</InputLabel>
+                                        <InputLabel id="demo-multiple-checkbox-label">{filterType}</InputLabel>
                                             <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                label="num"
-                                                value={select}
-                                                onChange={handleSelectChange}
-                                            >
-                                                <MenuItem value="None">None</MenuItem>
-                                                {filterList.map((result) => (
-                                                    <MenuItem value={result}>{result}</MenuItem>
+                                                labelId="demo-multiple-checkbox-label"
+                                                id="demo-multiple-name"
+                                                multiple
+                                                value={personName}
+                                                onChange={handleMultiChange}
+                                                input={<OutlinedInput label="Name" />}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                MenuProps={MenuProps}
+                                                >
+                                                {filterList.map((name) => (
+                                                    <MenuItem
+                                                        key={name}
+                                                        value={name}
+                                                    >
+                                                        <Checkbox checked={personName.indexOf(name) > -1} />
+                                                        <ListItemText primary={name} />
+                                                    </MenuItem>
                                                 ))}
                                             </Select>
                                     </FormControl>
                                 }
                             </Stack>}
-                            {/*<FormControlLabel control={<Checkbox defaultChecked />} label="Singer" />
-                            <FormControlLabel control={<Checkbox />} label="Album" />
-                            <FormControlLabel control={<Checkbox />} label="Type" /><br/><br/>*/}
                             <Button variant={"contained"} onClick={e => back()}>return to main page</Button>
                         </Typography>
                     </Container>
@@ -405,7 +415,6 @@ export default function SearchPage() {
                                                     result.artist_name
                                                     : input ? result.artist_name
                                                     : <Highlighted text={result.artist_name} highlight={searchContent}/> }
-                                                {/* {result.artist_name} */}
                                             </Typography>
                                             <Typography variant="body1">
                                                 <b>Album Name:</b>
@@ -413,7 +422,6 @@ export default function SearchPage() {
                                                     result.album_name
                                                     : input ? result.album_name
                                                     : <Highlighted text={result.album_name} highlight={searchContent}/> }
-                                                 {/* {result.album_name} */}
                                             </Typography>
                                             <Typography variant="body1">
                                                 <b>Genres:</b> {result.genres}
@@ -430,7 +438,6 @@ export default function SearchPage() {
                                             </Typography>
                                         </Grid>
                                         <Grid item>
-                                            {/* <Button size="medium" variant='outlined' onClick={e => toDetail(result.id)}>View</Button> */}
                                             <Button size="medium" variant='outlined' onClick={handleClickOpen(result)}>Whole lyrics</Button>
                                         </Grid>
                                     </Grid>
