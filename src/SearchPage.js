@@ -203,6 +203,10 @@ export default function SearchPage() {
 
     const changeInput = (event) => {
         setSearchContent(event.target.value);
+        setSearchContent(prev => {
+            console.log(prev)
+            return prev
+        });
         setInput(true)
     }
 
@@ -285,16 +289,19 @@ export default function SearchPage() {
                             <div>
                                 <input 
                                     onKeyPress={(event) => {
-                                        if (event.key === 'Enter') {
+                                        if (event.key === 'Enter' && searchContent !== '') {
                                             getSearchResultData()
                                         }
                                     }}
                                     required type="text" defaultValue={searchContent} 
-                                    placeholder="Input a query" className={"App-input-search"}
+                                    placeholder="Type a query (required)" className={"App-input-search"}
                                     onChange={changeInput} maxLength={50}/>
-                                <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
-                                    <SearchIcon />
-                                </IconButton>
+                                {searchContent !== '' ? 
+                                    <IconButton sx={{ p: '10px' }} aria-label="search" onClick={e => getSearchResultData()}>
+                                        <SearchIcon />
+                                    </IconButton>
+                                    : <div></div>
+                                }
                                 {/* <button onClick={e => getSearchResultData()} className={"App-submit"}> 
                                     Search 
                                 </button> */}
