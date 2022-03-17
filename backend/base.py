@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from search import search_result
+from search_new import search_result
 
 api = Flask(__name__)
 
