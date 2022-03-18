@@ -211,6 +211,7 @@ export default function SearchPage() {
     }
 
     const Highlighted = ({text = '', highlight = ''}) => {
+        highlight = highlight.trim()
         const list = highlight.replaceAll(" ", "|\\b")
         const t = text.replaceAll(" ", "* *")
         const textList = t.split("*")
