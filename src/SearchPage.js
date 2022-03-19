@@ -61,12 +61,18 @@ const Img = styled('img')({
 });
 
 class RegExp1 extends RegExp {
+
     [Symbol.match](str) {
-      const result = RegExp.prototype[Symbol.match].call(this, str);
-      if (result) {
-        return 'VALID';
-      }
-      return 'INVALID';
+        try {
+            const result = RegExp.prototype[Symbol.match].call(this, str);
+                    if (result) {
+                        return 'VALID';
+                    }
+                    return 'INVALID';
+        }catch (error){
+            return 'INVALID'
+        }
+
     }
 }
 
@@ -212,17 +218,34 @@ export default function SearchPage() {
 
     const Highlighted = ({text = '', highlight = ''}) => {
         highlight = highlight.trim()
-        const list = highlight.replaceAll(" ", "|\\b")
-        const t = text.replaceAll(" ", "* *")
-        const textList = t.split("*")
-        return (
-            <span>
-                {textList.map((t, i) => (
-                    t.match(new RegExp1(`\\b${list}+`, "gi")) === 'VALID' ? 
-                        <mark key={i}>{t}</mark> : <span key={i}>{t}</span>
-                ))}
-            </span>
-        )
+        var nonValid = highlight;
+        //console.log(nonValid)
+        nonValid = nonValid.replaceAll(/[^0-9a-zA-Z]/gi, "")
+        //console.log(nonValid)
+        //console.log(nonValid==="")
+        if (nonValid===""){
+            const t = text.replaceAll(" ", "* *")
+            const textList = t.split("*")
+            return <span>
+                        {textList.map((t, i) => (
+                            <span key={i}>{t}</span>
+                        ))}
+                    </span>
+        } else {
+            highlight=highlight.replace(/[^0-9a-zA-Z ]/gi, "")
+            console.log(highlight)
+            const list = highlight.replaceAll(" ", "|\\b")
+            const t = text.replaceAll(" ", "* *")
+            const textList = t.split("*")
+            return (
+                <span>
+                    {textList.map((t, i) => (
+                        t.match(new RegExp1(`\\b${list}+`, "gi")) === 'VALID' ?
+                            <mark key={i}>{t}</mark> : <span key={i}>{t}</span>
+                    ))}
+                </span>
+            )
+        }
     }
 
     const handleMultiChange = (event) => {
