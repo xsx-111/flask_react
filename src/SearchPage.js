@@ -190,13 +190,16 @@ export default function SearchPage() {
             url: `/profile?query=${searchContent}&type=${searchType}`,
         })
         .then((response) => {
+            setLoading(false)
+            setLoading(l => (
+                setLoading(l)
+            ))
             setData(response.data)
             setProfileData(response.data['results'])
             setArtistFilter(response.data['artist_name'][0])
             setAlbumFilter(response.data['album_name'][0])
             // setGenresFilter(response.data['genres'][0])
             setOffset(0)
-            setLoading(false)
             console.log(response.data)
         }).catch((error) => {
             if (error.response) {
