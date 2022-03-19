@@ -233,6 +233,7 @@ export default function SearchPage() {
                     </span>
         } else {
             highlight=highlight.replace(/[^0-9a-zA-Z ]/gi, "")
+            highlight=highlight.trim()
             console.log(highlight)
             const list = highlight.replaceAll(" ", "|\\b")
             const t = text.replaceAll(" ", "* *")
