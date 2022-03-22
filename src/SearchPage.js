@@ -42,7 +42,7 @@ function Copyright() {
         <Typography variant="body2" color="text.secondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="http://130.211.223.75:3000/">
-                TTDS Group60
+                TTDS Group23
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
